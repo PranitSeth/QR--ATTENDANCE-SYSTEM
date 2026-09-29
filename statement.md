@@ -1,23 +1,20 @@
 # Problem Statement
 
 ## Problem Statement
-Manual attendance tracking in classrooms is time-consuming, error-prone, and difficult to analyze over time. Physical registers can be lost, attendance can be misrecorded, and generating attendance summaries or insights (like identifying frequently absent students) requires tedious manual counting.
+Manual and Excel-based attendance tracking is slow, error-prone, and gives teachers no way to prevent proxy attendance, since anyone can mark a name present on a paper register or a shared sheet without the actual student being present.
 
 ## Scope of the Project
-This project implements a lightweight, console-based attendance management system that:
-- Digitizes student registration and record-keeping
-- Uses QR codes to uniquely identify each student for quick, standardized attendance marking
-- Stores attendance data in a structured, retrievable format (JSON)
-- Provides basic analytics to help identify attendance patterns
+This project implements a QR-based attendance system where the teacher starts a class session showing a QR code that refreshes every 20 seconds. Students scan it and submit their name and registration number themselves, from their own phone, which is checked against registered records before being marked present. All data is stored in an Excel file, one row per student and one column per class.
 
-The scope is limited to a single class/department-level use case, with local file-based storage (not a networked/multi-user system).
+The scope is limited to a single class or department-level use case, with local, offline storage rather than a networked, multi-user system.
 
 ## Target Users
-- College/school faculty or teaching assistants responsible for tracking student attendance
-- Small institutions or individual class instructors who want a simple, low-cost digital attendance solution without needing complex, expensive attendance software
+- College or school faculty who currently take attendance manually or through a plain Excel/paper register
+- Small institutions or individual instructors who want a fast, low-cost, self-service attendance system without buying dedicated attendance software
 
 ## High-Level Features
-- Student registration with duplicate prevention
-- Unique QR code generation per student
-- Daily attendance marking and date-wise attendance viewing
-- Attendance analytics: summaries, top attendees, and Kth-highest attendance lookup
+- One-time student registration (registration number, name)
+- Teacher-started class sessions with a rotating, time-limited QR code
+- Student self-service attendance marking through a phone web form, with name verification
+- Excel-based attendance records, viewable directly without extra tools
+- Attendance summaries and top-attendee rankings

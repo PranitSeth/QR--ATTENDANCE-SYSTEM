@@ -1,69 +1,51 @@
-import json
-from attendance import load_attendance
+from excel_store import get_students, FILE_NAME, FIXED_COLUMNS
+from openpyxl import load_workbook
 
-FILE_NAME = "students.json"
-
-def load_students():
-    try:
-        with open(FILE_NAME, "r") as file:
-            return json.load(file)
-    except FileNotFoundError:
-        return {}
-
-def view_all_students(students):
+def view_all_students():
+    students = get_students()
     if not students:
         print("No students registered yet.")
         return
-
     print("\n--- All Registered Students ---")
-    for roll_no, info in students.items():
-        print(f"Roll No: {roll_no} | Name: {info['name']} | Phone: {info['phone']}")
+    for reg_no, name in students.items():
+        print(f"Reg No: {reg_no} | Name: {name}")
 
-def attendance_count_per_student(students):
-    attendance = load_attendance()
-    counts = {roll_no: 0 for roll_no in students}
-
-    for day, present_list in attendance.items():
-        for roll_no in present_list:
-            if roll_no in counts:
-                counts[roll_no] += 1
-
+def _attendance_counts():
+    wb = load_workbook(FILE_NAME)
+    ws = wb.active
+    counts = {}
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        reg_no, name = row[0], row[1]
+        if not reg_no:
+            continue
+        present_count = sum(1 for cell in row[FIXED_COLUMNS:] if cell == "Present")
+        counts[reg_no] = {"name": name, "count": present_count}
     return counts
 
-def show_attendance_summary(students):
-    counts = attendance_count_per_student(students)
-
+def show_attendance_summary():
+    counts = _attendance_counts()
     if not counts:
         print("No students registered yet.")
         return
+    print("\n--- Attendance Summary (classes present) ---")
+    for reg_no, info in counts.items():
+        print(f"Reg No: {reg_no} | Name: {info['name']} | Classes Present: {info['count']}")
 
-    print("\n--- Attendance Summary (days present) ---")
-    for roll_no, count in counts.items():
-        name = students[roll_no]['name']
-        print(f"Roll No: {roll_no} | Name: {name} | Days Present: {count}")
-
-def show_top_attendance(students, n=1):
-    counts = attendance_count_per_student(students)
-
+def show_top_attendance(n=1):
+    counts = _attendance_counts()
     if not counts:
         print("No students registered yet.")
         return
-
-    sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
-
+    ranked = sorted(counts.items(), key=lambda x: x[1]["count"], reverse=True)
     print(f"\n--- Top {n} Student(s) by Attendance ---")
-    for roll_no, count in sorted_counts[:n]:
-        name = students[roll_no]['name']
-        print(f"Roll No: {roll_no} | Name: {name} | Days Present: {count}")
+    for reg_no, info in ranked[:n]:
+        print(f"Reg No: {reg_no} | Name: {info['name']} | Classes Present: {info['count']}")
 
-def show_kth_highest_attendance(students, k):
-    counts = attendance_count_per_student(students)
-
+def show_kth_highest_attendance(k):
+    counts = _attendance_counts()
     if not counts or k > len(counts) or k < 1:
         print("Invalid rank or no data available.")
         return
-
-    sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
-    roll_no, count = sorted_counts[k - 1]
-    name = students[roll_no]['name']
-    print(f"\n{k}-th highest attendance: Roll No {roll_no} | Name: {name} | Days Present: {count}")
+    ranked = sorted(counts.items(), key=lambda x: x[1]["count"], reverse=True)
+    reg_no, info = ranked[k - 1]
+    print(f"\n{k}-th highest attendance: Reg No {reg_no} | Name: {info['name']} | Classes Present: {info['count']}")
