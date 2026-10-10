@@ -41,7 +41,7 @@ def start_class_session(class_label):
         tk_img = ImageTk.PhotoImage(img)
         label.configure(image=tk_img)
         label.image = tk_img
-        window.after(20000, refresh)
+        window.after(45000, refresh)
 
     refresh()
     window.mainloop()

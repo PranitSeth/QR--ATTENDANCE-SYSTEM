@@ -32,7 +32,7 @@ QR-attendance_system/
 ├── README.md
 └── statement.md
 
-https://github.com/PranitSeth/QR--ATTENDANCE-SYSTEM.gitv
+https://github.com/PranitSeth/QR--ATTENDANCE-SYSTEM.git
 
 
 ## How to Use
